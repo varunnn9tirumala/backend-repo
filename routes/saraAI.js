@@ -8,6 +8,10 @@ baseURL: "https://api.deepseek.com",
 apiKey: process.env.DEEPSEEK_API_KEY
 })
 
+router.options("/sara-ai", (req, res) => {
+  res.status(200).send();
+});
+
 router.post("/sara-ai", async (req,res)=>{
 
 const { message, trip } = req.body
