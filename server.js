@@ -9,12 +9,13 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-  origin: "*",
-  methods: ["GET","POST","OPTIONS"],
-  allowedHeaders: ["Content-Type"]
+  origin:[
+    "https://tripcraft-frontend.vercel.app",
+    "http://localhost:5173"
+  ],
+  methods:["GET","POST"],
+  credentials:true
 }))
-
-app.options("*", cors())   // ⭐ important line for preflight
 
 app.use(express.json())
 
