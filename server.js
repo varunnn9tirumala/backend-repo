@@ -8,27 +8,22 @@ dotenv.config()
 
 const app = express()
 
-app.use(
-cors({
-origin:[
-"https://tripcraft-frontend.vercel.app",
-"http://localhost:5173"
-],
-methods:["GET","POST"],
-credentials:true
-})
-)
+app.use(cors({
+  origin: "*",
+  methods: ["GET","POST","OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+}))
 
 app.use(express.json())
 
 app.use("/api", saraAI)
 
 app.get("/", (req,res)=>{
-res.send("TripCraft AI Server Running 🚀")
+  res.send("TripCraft AI Server Running 🚀")
 })
 
 const PORT = process.env.PORT || 5050
 
 app.listen(PORT,()=>{
-console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
