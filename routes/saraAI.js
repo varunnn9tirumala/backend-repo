@@ -1,16 +1,6 @@
 import express from "express"
-import OpenAI from "openai"
 
 const router = express.Router()
-
-const client = new OpenAI({
-baseURL: "https://api.deepseek.com",
-apiKey: process.env.DEEPSEEK_API_KEY
-})
-
-router.options("/sara-ai", (req, res) => {
-  res.status(200).send();
-});
 
 router.post("/sara-ai", async (req,res)=>{
 
@@ -18,59 +8,36 @@ const { message, trip } = req.body
 
 try{
 
-const completion = await client.chat.completions.create({
-
+const response = await fetch("https://api.deepseek.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${process.env.DEEPSEEK_API_KEY}`
+},
+body:JSON.stringify({
 model:"deepseek-chat",
-
 messages:[
 {
 role:"system",
-content:`
-You are SARA, the AI travel assistant of TripCraft.
-
-Your goal:
-Improve travel packages WITHOUT increasing price.
-
-Add complimentary experiences such as:
-• Free breakfast
-• Airport pickup
-• Sightseeing tour
-• Travel insurance
-• Late checkout
-• Room upgrade
-
-Your job is to convince the traveler that the package is valuable.
-
-Respond in a friendly travel agent tone.
-`
+content:"You are SARA, TripCraft travel assistant. Improve travel packages without increasing price."
 },
-
 {
 role:"user",
-content:`
-Trip details
-
-Departure: ${trip.departure}
-Destination: ${trip.destination}
-Travelers: ${trip.travelers}
-Dates: ${trip.departDate} to ${trip.returnDate}
-
-User request:
-${message}
-`
+content:`Trip from ${trip.departure} to ${trip.destination}. User message: ${message}`
 }
-
 ]
-
+})
 })
 
+const data = await response.json()
+
 res.json({
-reply: completion.choices[0].message.content
+reply:data.choices[0].message.content
 })
 
 }catch(err){
 
-console.log(err)
+console.error(err)
 
 res.status(500).json({
 error:"AI server error"
